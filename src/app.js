@@ -1,26 +1,20 @@
 const express = require('express');
 const connectDB = require('./config/database')
-const User = require('./models/user')
+const cookieParser = require("cookie-parser")
+const authRoute = require('./route/auth')
+const profileRoute = require('./route/profile')
+const requestRoute = require('./route/request')
+const userRoute = require('./route/user')
 
 const app = express()
+//express.json() middleware use to convert JSON obj into JS Obj and pass to the body
+app.use(express.json())
+app.use(cookieParser())
 
-app.post('/signup', async (req, res) => {
-    const userObj = new User({
-        firstName: "Kuldeep",
-        lastName: "Gupta",
-        emailId: "kuldeep@gmail.com",
-        password: "kuldeep123",
-        age: 25,
-        gender: "male"
-    })
-
-    try {
-        await userObj.save();
-        res.send("User Added Successfully!")
-    } catch (error) {
-        res.status(400).send("Something went to wrong!")
-    }
-})
+app.use('/', authRoute)
+app.use('/', profileRoute)
+app.use('/', requestRoute)
+app.use('/', userRoute)
 
 
 connectDB().then(() => {
